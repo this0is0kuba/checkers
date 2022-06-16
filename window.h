@@ -2,10 +2,14 @@
 
 class Window
 {
-    int chosen_i;
-    int chosen_j;
-    Board board;
+    int copy_board[8][8]; // 0 - czarny, 1 - bialy, 2 - puste pole
 
+    int max; //ile jest aktualnie najwiecej mozliwych bic
+    int max_capture_board[8][8]; //ile bic ma jaki pionek (pionki ktore aktualnie nie maja tury maja ustawione 0)
+    int chosen_i; //aktualnie wybrane pole
+    int chosen_j;
+
+    Board board; //plansza
     sf::RenderWindow application_window;
 
 public:
@@ -22,14 +26,18 @@ public:
 
     int range();
     void choose_pawn();
-    int forced_capture();
+    void max_capturing(int, int, int, int, int, int);
+    void check_captues_all_pawns(int);
     void move();
     int change_pawn(int, int);
 
     int legal(int, int);
     int legal_white(int, int);
     int legal_black(int, int);
-    int capturing_a_pawn(int, int);
+    int capturing_a_pawn(int, int, int);
+    int choose_max();
+    int is_it_max(int, int, int);
+
     int upgrade_to_queen(int, int);
 
     int legal_queen(int, int);
@@ -38,4 +46,6 @@ public:
 
     void delete_pawn(int, int);
     void selected_field(int, int);
+
+    void copy_restart();
 };

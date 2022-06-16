@@ -3,7 +3,10 @@
 
 // ------------------------------ Window ------------------------------ //
 
-Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1) {}
+Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1), max(0) 
+{
+    copy_restart();
+}
 
 void Window::display_board()
 {
@@ -51,9 +54,11 @@ void Window::events()
             if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
                 {
                     if(range())
-                    {
+                    {   
                         if(chosen_i == -1 && chosen_j == -1)
+                        {
                             choose_pawn();
+                        }
                         else
                             move();
                     }
@@ -138,6 +143,130 @@ void Window::choose_pawn()
             break;
         }
     }
+    if(!(board.check_field(chosen_i, chosen_j)))
+    {
+        chosen_i = -1;
+        chosen_j = -1;
+    }
+    else
+        check_captues_all_pawns(board.get(chosen_i,chosen_j)->get_c());
+}
+
+void Window::max_capturing(int ch_i, int ch_j, int count, int x, int y, int r)
+{
+    if(copy_board[ch_i][ch_j] != r)
+        return;
+    
+    if(ch_i - 2 >= 0 && ch_j - 2 >= 0)
+        if(copy_board[ch_i - 2][ch_j - 2] == 2 && copy_board[ch_i - 1][ch_j - 1] != 2)
+            if(copy_board[ch_i - 1][ch_j - 1] != copy_board[ch_i][ch_j])
+            {
+                count++;    //zliczanie glebokosci
+                if(count > max_capture_board[x][y])
+                    max_capture_board[x][y] = count;
+
+                if(count > max)
+                    max = count;
+
+                copy_board[ch_i - 2][ch_j - 2] = copy_board[ch_i][ch_j]; //zamiana
+                int aux = copy_board[ch_i - 1][ch_j - 1];
+                copy_board[ch_i - 1][ch_j - 1] = 2; //usuwanie zbitego pionka
+                copy_board[ch_i][ch_j] = 2; //zamiana
+
+                max_capturing(ch_i - 2, ch_j - 2, count, x, y, r);
+
+                copy_board[ch_i][ch_j] = copy_board[ch_i - 2][ch_j - 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i - 1][ch_j - 1] = aux; 
+                copy_board[ch_i - 2][ch_j - 2] = 2; 
+
+                count--; //zerowanie glebokosci po powrocie
+            }
+
+    if(ch_i - 2 >= 0 && ch_j + 2 <= 7)
+        if(copy_board[ch_i - 2][ch_j + 2] == 2 && copy_board[ch_i - 1][ch_j + 1] != 2)
+            if(copy_board[ch_i - 1][ch_j + 1] != copy_board[ch_i][ch_j])
+            {
+                count++;    //zliczanie glebokosci
+                if(count > max_capture_board[x][y])
+                    max_capture_board[x][y] = count;
+
+                if(count > max)
+                    max = count;
+
+                copy_board[ch_i - 2][ch_j + 2] = copy_board[ch_i][ch_j]; //zamiana
+                int aux = copy_board[ch_i - 1][ch_j + 1];
+                copy_board[ch_i - 1][ch_j + 1] = 2; //usuwanie zbitego pionka
+                copy_board[ch_i][ch_j] = 2; //zamiana
+
+                max_capturing(ch_i - 2, ch_j + 2, count, x, y, r);
+
+                copy_board[ch_i][ch_j] = copy_board[ch_i - 2][ch_j + 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i - 1][ch_j + 1] = aux; 
+                copy_board[ch_i - 2][ch_j + 2] = 2; 
+
+                count--; //zerowanie glebokosci po powrocie
+            }
+
+    if(ch_i + 2 <= 7 && ch_j + 2 <= 7)
+        if(copy_board[ch_i + 2][ch_j + 2] == 2 && copy_board[ch_i + 1][ch_j + 1] != 2)
+            if(copy_board[ch_i + 1][ch_j + 1] != copy_board[ch_i][ch_j])
+            {
+                count++;    //zliczanie glebokosci
+                if(count > max_capture_board[x][y])
+                    max_capture_board[x][y] = count;
+
+                if(count > max)
+                    max = count;
+
+                copy_board[ch_i + 2][ch_j + 2] = copy_board[ch_i][ch_j]; //zamiana
+                int aux = copy_board[ch_i + 1][ch_j + 1];
+                copy_board[ch_i + 1][ch_j + 1] = 2; //usuwanie zbitego pionka
+                copy_board[ch_i][ch_j] = 2; //zamiana
+
+                max_capturing(ch_i + 2, ch_j + 2, count, x, y, r);
+
+                copy_board[ch_i][ch_j] = copy_board[ch_i + 2][ch_j + 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i + 1][ch_j + 1] = aux; 
+                copy_board[ch_i + 2][ch_j + 2] = 2; 
+
+                count--; //zerowanie glebokosci po powrocie
+            }
+
+    if(ch_i + 2 <= 7 && ch_j - 2 >= 0)
+        if(copy_board[ch_i + 2][ch_j - 2] == 2 && copy_board[ch_i + 1][ch_j - 1] != 2)
+            if(copy_board[ch_i + 1][ch_j - 1] != copy_board[ch_i][ch_j])
+            {
+                count++;    //zliczanie glebokosci
+                if(count > max_capture_board[x][y])
+                    max_capture_board[x][y] = count;
+
+                if(count > max)
+                    max = count;
+
+                copy_board[ch_i + 2][ch_j - 2] = copy_board[ch_i][ch_j]; //zamiana
+                int aux = copy_board[ch_i + 1][ch_j - 1];
+                copy_board[ch_i + 1][ch_j - 1] = 2; //usuwanie zbitego pionka
+                copy_board[ch_i][ch_j] = 2; //zamiana
+
+                max_capturing(ch_i + 2, ch_j - 2, count, x, y, r);
+
+                copy_board[ch_i][ch_j] = copy_board[ch_i + 2][ch_j - 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i + 1][ch_j - 1] = aux; 
+                copy_board[ch_i + 2][ch_j - 2] = 2; 
+
+                count--; //zerowanie glebokosci po powrocie
+            }
+}
+
+void Window::check_captues_all_pawns(int r)
+{
+    for(int i = 0; i < 8; i++)
+        for(int j = 0; j < 8; j++)
+            if(board.check_field(i, j))
+                if(board.get(i, j)->get_c() == r)
+                {
+                    max_capturing(i, j, 0, i, j, board.get(i, j)->get_c());
+                }
 }
 
 void Window::move()
@@ -170,8 +299,8 @@ void Window::move()
             break;
         }
     }
-
-    if(change_pawn(move_x, move_y) && legal(move_x, move_y))
+    
+    if(!(change_pawn(move_x, move_y)) && legal(move_x, move_y))
         {
             board.swap_fields(chosen_i, chosen_j, move_x, move_y);
 
@@ -181,7 +310,8 @@ void Window::move()
             if(upgrade_to_queen(move_x, move_y))
             {
                 board.upgrade(move_x, move_y);
-            }  
+            }
+            copy_restart();  
         } 
 }
 
@@ -202,10 +332,10 @@ int Window::change_pawn(int move_x, int move_y)
     {
         chosen_i = move_x;
         chosen_j = move_y;
-        return 0;
+        return 1;
     }
     else
-        return 1;
+        return 0;
 }
 
 int Window::legal(int move_x, int move_y)
@@ -216,12 +346,12 @@ int Window::legal(int move_x, int move_y)
         {
             if(board.get(chosen_i, chosen_j)->get_c() == 1)
             {
-                if(legal_white(move_x, move_y))
+                if(choose_max() && legal_white(move_x, move_y))            
                     return 1;
             }
             else
             {
-                if(legal_black(move_x, move_y))
+                if(choose_max() && legal_black(move_x, move_y))
                     return 1;
             }
         }
@@ -234,12 +364,19 @@ int Window::legal(int move_x, int move_y)
     return 0;
 }
 
+int Window::choose_max()
+{
+    if(max_capture_board[chosen_i][chosen_j] == max)
+        return 1;
+    return 0;
+}
+
 int Window::legal_white(int move_x, int move_y)
 {
-    if(abs(move_x - chosen_i) == 1 && move_y - chosen_j == -1)
+    if(abs(move_x - chosen_i) == 1 && move_y - chosen_j == -1 && max == 0)
         return 1;
     else
-        if(capturing_a_pawn(move_x, move_y))
+        if(capturing_a_pawn(move_x, move_y, 1))
             return 1;
         
     return 0;
@@ -247,26 +384,56 @@ int Window::legal_white(int move_x, int move_y)
 
 int Window::legal_black(int move_x, int move_y)
 {
-    if(abs(move_x - chosen_i) == 1 && move_y - chosen_j == 1)
+    if(abs(move_x - chosen_i) == 1 && move_y - chosen_j == 1 && max == 0)
         return 1;
     else
-        if(capturing_a_pawn(move_x, move_y))
+        if(capturing_a_pawn(move_x, move_y, 0))
             return 1;
     
     return 0;
 }
 
-int Window::capturing_a_pawn(int move_x, int move_y)
+int Window::capturing_a_pawn(int move_x, int move_y, int r)
 {
     if(abs(move_x - chosen_i) == 2 && abs(move_y - chosen_j) == 2)
         if(board.get((chosen_i + move_x) / 2, (chosen_j + move_y) / 2) != nullptr)
             if(board.get(chosen_i, chosen_j)->get_c() != board.get((chosen_i + move_x) / 2, (chosen_j + move_y) / 2)->get_c())
-            {
-                delete_pawn((chosen_i + move_x) / 2, (chosen_j + move_y) / 2);
-                return 1;
-            }
+                if(is_it_max(move_x, move_y, r))
+                {
+                    delete_pawn((chosen_i + move_x) / 2, (chosen_j + move_y) / 2);
+                    return 1;
+                }
     
     return 0;
+}
+
+int Window::is_it_max(int move_x, int move_y, int r)
+{
+    copy_board[move_x][move_y] = copy_board[chosen_i][chosen_j];
+    copy_board[chosen_i][chosen_j] = 2; // symualacja bicia
+
+    int x = (chosen_i + move_x) / 2;
+    int y = (chosen_j + move_y) / 2;
+    int aux = copy_board[x][y];
+    copy_board[x][y] = 2;
+
+    int aux_max = max;
+    max = 0;
+    max_capturing(move_x, move_y, 0, move_x, move_y, r);
+
+    if(max == aux_max - 1)
+    {
+        return 1;
+    }
+    else
+    {
+        copy_board[chosen_i][chosen_j] = copy_board[move_x][move_y];
+        copy_board[move_x][move_y] = 2;
+        copy_board[x][y] = aux; //wstawienie pionka na miejscea
+        
+        max = aux_max;
+        return 0;
+    }
 }
 
 int Window::legal_queen(int move_x, int move_y)
@@ -373,3 +540,17 @@ void Window::selected_field(int i, int j)
         application_window.draw(field);
 }
 
+void Window::copy_restart()
+{
+    for(int j = 0; j < 8 ; j++)
+        for(int i = 0; i < 8; i++)
+            {
+                if(board.check_field(i,j))
+                    copy_board[i][j] = board.get(i, j)->get_c();
+                else
+                    copy_board[i][j] = 2;
+
+                max_capture_board[i][j] = 0;
+            }
+    max = 0;
+}
