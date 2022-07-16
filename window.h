@@ -29,7 +29,9 @@ public:
     void max_capturing(int, int, int, int, int, int);
     void check_captues_all_pawns(int);
     void move();
+
     int change_pawn(int, int);
+    int upgrade_to_queen(int, int);
 
     int legal(int, int);
     int legal_white(int, int);
@@ -37,8 +39,6 @@ public:
     int capturing_a_pawn(int, int, int);
     int choose_max();
     int is_it_max(int, int, int);
-
-    int upgrade_to_queen(int, int);
 
     int legal_queen(int, int);
     int queen_legal_move(int, int);
