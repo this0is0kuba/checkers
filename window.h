@@ -26,8 +26,11 @@ public:
 
     int range();
     void choose_pawn();
-    void max_capturing(int, int, int, int, int, int);
+
     void check_captues_all_pawns(int);
+    void max_capturing_queen(int, int, int, int, int);
+    void max_capturing(int, int, int, int, int);
+
     void move();
 
     int change_pawn(int, int);
@@ -36,10 +39,11 @@ public:
     int legal(int, int);
     int legal_white(int, int);
     int legal_black(int, int);
-    int capturing_a_pawn(int, int, int);
+    int capturing_a_pawn(int, int);
     int choose_max();
-    int is_it_max(int, int, int);
+    int is_it_max(int, int);
 
+    int is_it_max_queen(int, int);
     int legal_queen(int, int);
     int queen_legal_move(int, int);
     int capturing_a_queen(int, int);
