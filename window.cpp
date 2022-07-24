@@ -3,7 +3,7 @@
 
 // ------------------------------ Window ------------------------------ //
 
-Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1), max(0) 
+Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1), max(0), round(1) 
 {
     copy_restart();
 }
@@ -149,7 +149,15 @@ void Window::choose_pawn()
         chosen_j = -1;
     }
     else
-        check_captues_all_pawns(board.get(chosen_i,chosen_j)->get_c());
+    {
+        if(board.get(chosen_i, chosen_j)->get_c() == round)
+            check_captues_all_pawns(round);
+        else
+        {
+           chosen_i = -1;
+           chosen_j = -1; 
+        }
+    }
 }
 
 void Window::check_captues_all_pawns(int r)
@@ -166,6 +174,7 @@ void Window::check_captues_all_pawns(int r)
                     {
                         max_capturing_queen(i, j, 0, i, j);
                     }
+                            
 }
 
 void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
@@ -520,21 +529,29 @@ void Window::move()
 
             chosen_i = -1;
             chosen_j = -1;
-
+        
             if(upgrade_to_queen(move_x, move_y))
             {
                 board.upgrade(move_x, move_y);
             }
+
+            if(max == 0)
+                round_change();
+
             copy_restart();  
         } 
 }
 
-int Window::change_pawn(int move_x, int move_y)
+int Window::change_pawn(int move_x, int move_y) 
 {
-    if(board.get(move_x, move_y) != nullptr)
-    {            
-        chosen_i = move_x;
-        chosen_j = move_y;
+    if(board.check_field(move_x,move_y)) // "board.get(move_x, move_y)->get_c() == round" nie chcemy pozwolic graczowi wybrac pionka przeciwnika
+    {
+        if(board.get(move_x, move_y)->get_c() == round)
+        {
+            chosen_i = move_x;
+            chosen_j = move_y;
+        }
+
         return 1;
     }
     else
@@ -543,10 +560,10 @@ int Window::change_pawn(int move_x, int move_y)
 
 int Window::upgrade_to_queen(int move_x, int move_y)
 {
-    if(board.get(move_x, move_y)->get_c() == 1 && move_y == 0)
+    if(board.get(move_x, move_y)->get_c() == 1 && move_y == 0 && max == 0) //max == 0 - sprawdzamy czy pionek zatrzymal sie na tym polu czy moze to seria bic
             return 1;
 
-    if(board.get(move_x, move_y)->get_c() == 0 && move_y == 7)
+    if(board.get(move_x, move_y)->get_c() == 0 && move_y == 7 && max == 0)
             return 1;
 
     return 0;
@@ -819,4 +836,13 @@ void Window::copy_restart()
                 max_capture_board[i][j] = 0;
             }
     max = 0;
+}
+
+void Window::round_change()
+{
+    switch (round)
+    {
+    case 0: round = 1; break;
+    case 1: round = 0; break;
+    }
 }

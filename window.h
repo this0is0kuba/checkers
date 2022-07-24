@@ -9,6 +9,8 @@ class Window
     int chosen_i; //aktualnie wybrane pole
     int chosen_j;
 
+    int round; // 1 - runda bialego, 0 - runda czarnego
+
     Board board; //plansza
     sf::RenderWindow application_window;
 
@@ -33,7 +35,7 @@ public:
 
     void move();
 
-    int change_pawn(int, int);
+    int change_pawn(int, int); //"proba zmiany pionka" zwraca true gdy mamy wybrany pionek i klikamy na inny, dodatkowo zmienia na inny pionek jesli jest tego samego co poprzednio wybrany
     int upgrade_to_queen(int, int);
 
     int legal(int, int);
@@ -52,4 +54,5 @@ public:
     void selected_field(int, int);
 
     void copy_restart();
+    void round_change();
 };
