@@ -3,8 +3,13 @@
 
 // ------------------------------ Window ------------------------------ //
 
-Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1), max(0), round(1) 
+Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1), max(0), round(1), block(0)
 {
+    for(int i = 0; i < 8; i++)
+        for(int j = 0; j < 8; j++)
+        {
+            block_pion[j][i] = 0;
+        }
     copy_restart();
 }
 
@@ -150,9 +155,7 @@ void Window::choose_pawn()
     }
     else
     {
-        if(board.get(chosen_i, chosen_j)->get_c() == round)
-            check_captues_all_pawns(round);
-        else
+        if(board.get(chosen_i, chosen_j)->get_c() != round)
         {
            chosen_i = -1;
            chosen_j = -1; 
@@ -536,9 +539,10 @@ void Window::move()
             }
 
             if(max == 0)
-                round_change();
-
-            copy_restart();  
+            {
+                copy_restart(); 
+                round_change(); 
+            }
         } 
 }
 
@@ -630,7 +634,7 @@ int Window::capturing_a_pawn(int move_x, int move_y)
         if(board.get((chosen_i + move_x) / 2, (chosen_j + move_y) / 2) != nullptr)
             if(board.get(chosen_i, chosen_j)->get_c() != board.get((chosen_i + move_x) / 2, (chosen_j + move_y) / 2)->get_c())
                 if(is_it_max(move_x, move_y))
-                {
+                {   
                     delete_pawn((chosen_i + move_x) / 2, (chosen_j + move_y) / 2);
                     return 1;
                 }
@@ -639,7 +643,11 @@ int Window::capturing_a_pawn(int move_x, int move_y)
 }
 
 int Window::is_it_max(int move_x, int move_y)
-{
+{   
+    if(block)
+        if(block_pion[chosen_i][chosen_j] == 0)
+            return 0;
+    
     copy_board[move_x][move_y] = copy_board[chosen_i][chosen_j];
     copy_board[chosen_i][chosen_j] = 2; // symualacja bicia
 
@@ -653,8 +661,19 @@ int Window::is_it_max(int move_x, int move_y)
     max_capturing(move_x, move_y, 0, move_x, move_y);
 
     if(max == aux_max - 1)
-    {
-        return 1;
+    {   
+        if(max >= 1)
+        {
+            block = 1;
+            block_pion[chosen_i][chosen_j] = 0;
+            block_pion[move_x][move_y] = 1;
+        }    
+        else
+        {
+            block = 0;
+            block_pion[chosen_i][chosen_j] = 0;
+        }
+        return 1;      
     }
     else
     {
@@ -669,6 +688,10 @@ int Window::is_it_max(int move_x, int move_y)
 
 int Window::is_it_max_queen(int move_x, int move_y) 
 {
+    if(block)
+        if(block_pion[chosen_i][chosen_j] == 0)
+            return 0;
+
     copy_board[move_x][move_y] = copy_board[chosen_i][chosen_j];
     copy_board[chosen_i][chosen_j] = 2; // symualacja bicia
 
@@ -706,6 +729,17 @@ int Window::is_it_max_queen(int move_x, int move_y)
 
     if(max == aux_max - 1)
     {
+        if(max >= 1)
+        {
+            block = 1;
+            block_pion[chosen_i][chosen_j] = 0;
+            block_pion[move_x][move_y] = 1;
+        }    
+        else
+        {
+            block = 0;
+            block_pion[chosen_i][chosen_j] = 0;
+        }
         return 1;
     }
     else
@@ -845,4 +879,5 @@ void Window::round_change()
     case 0: round = 1; break;
     case 1: round = 0; break;
     }
+    check_captues_all_pawns(round);
 }

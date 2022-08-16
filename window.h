@@ -10,6 +10,8 @@ class Window
     int chosen_j;
 
     int round; // 1 - runda bialego, 0 - runda czarnego
+    int block; // 1 - jakis pionek musi dokonczyc swoje bicia, 0 - mozna kontynuowac dowolnym pionkiem
+    int block_pion[8][8]; // nie zezwa na to abysmy ruszyli sie innym pionkiem dwa razy niz poczatkowo wyralismy
 
     Board board; //plansza
     sf::RenderWindow application_window;
