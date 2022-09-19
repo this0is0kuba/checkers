@@ -3,7 +3,8 @@
 
 // ------------------------------ Window ------------------------------ //
 
-Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1), max(0), round(1), block(0)
+Window::Window() : application_window(sf::VideoMode(1920, 1080, 32), "Checkers", sf::Style::Fullscreen), chosen_i(-1), chosen_j(-1), max(0),
+                   round(1), block(0), end_game(0), white(12), black(12), moves_with_no_capturing(0)
 {
     for(int i = 0; i < 8; i++)
         for(int j = 0; j < 8; j++)
@@ -22,9 +23,13 @@ void Window::display_board()
 void Window::window_rendering()
 {
     while(application_window.isOpen())
-    {
+    {   
         texture();
         circles_display();
+
+        if(end_game)
+            end();
+
         events();
 
         application_window.display();
@@ -56,19 +61,44 @@ void Window::events()
                 application_window.close();
             if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 application_window.close();
-            if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
-                {
-                    if(range())
-                    {   
-                        if(chosen_i == -1 && chosen_j == -1)
-                        {
-                            choose_pawn();
-                        }
-                        else
-                            move();
+            if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && !end_game)
+            {
+                if(range())
+                {   
+                    if(chosen_i == -1 && chosen_j == -1)
+                    {
+                        choose_pawn();
                     }
+                    else
+                        move();
                 }
+            }
         }
+}
+
+void Window::end()
+{
+    sf::RectangleShape end_shape;
+    sf::Texture texture_end;
+    
+    if(end_game == 1)
+        texture_end.loadFromFile("./textures/whiteWin.png");
+    if(end_game == 2)
+        texture_end.loadFromFile("./textures/blackWin.png");
+    if(end_game == 3)
+        texture_end.loadFromFile("./textures/draw.png");
+
+    sf::Vector2u vector = application_window.getSize();
+
+    float length = std::min(vector.x, vector.y) / 8.0;
+    float delta_x = (vector.x - length * 8) * 0.5;
+    float delta_y = (vector.y - length * 8) * 0.5;
+
+    end_shape.setSize(sf::Vector2f(length * 4, length * 2));
+    end_shape.setPosition(2 * length + delta_x, 3 * length + delta_y);
+    end_shape.setTexture(&texture_end);
+    
+    application_window.draw(end_shape);
 }
 
 void Window::texture()
@@ -163,7 +193,7 @@ void Window::choose_pawn()
     }
 }
 
-void Window::check_captues_all_pawns(int r)
+void Window::check_captures_all_pawns(int r)
 {
     for(int i = 0; i < 8; i++)
         for(int j = 0; j < 8; j++)
@@ -494,7 +524,6 @@ void Window::max_capturing(int ch_i, int ch_j, int count, int x, int y)
             }
 }
 
-
 void Window::move()
 {
     sf::Vector2i mouse_vector = sf::Mouse::getPosition();
@@ -540,6 +569,7 @@ void Window::move()
 
             if(max == 0)
             {
+                check_the_end_of_the_game(board.get(move_x, move_y)->get_c());
                 copy_restart(); 
                 round_change(); 
             }
@@ -635,6 +665,7 @@ int Window::capturing_a_pawn(int move_x, int move_y)
             if(board.get(chosen_i, chosen_j)->get_c() != board.get((chosen_i + move_x) / 2, (chosen_j + move_y) / 2)->get_c())
                 if(is_it_max(move_x, move_y))
                 {   
+                    board.get((chosen_i + move_x) / 2,(chosen_j + move_y) / 2)->get_c() ? white-- : black--;
                     delete_pawn((chosen_i + move_x) / 2, (chosen_j + move_y) / 2);
                     return 1;
                 }
@@ -805,6 +836,7 @@ int Window::capturing_a_queen(int move_x, int move_y)
     
     if(how_many_captures == 1 && is_it_max_queen(move_x, move_y))
     {
+        board.get(aux_x, aux_y)->get_c() ? white-- : black--;
         delete_pawn(aux_x, aux_y);
         return 1;
     }
@@ -838,11 +870,13 @@ int Window::queen_legal_move(int move_x, int move_y)
     else
         return 0;
     
+    moves_with_no_capturing ++; // zliczamy ruchy damka bez zbijania
     return 1;
 }
 
 void Window::delete_pawn(int position_x, int position_y)
 {
+    moves_with_no_capturing = 0;
     board.delete_item(position_x, position_y);
 }
 
@@ -879,5 +913,99 @@ void Window::round_change()
     case 0: round = 1; break;
     case 1: round = 0; break;
     }
-    check_captues_all_pawns(round);
+    check_captures_all_pawns(round);
+}
+
+void Window::check_the_end_of_the_game(int player)
+{
+    if(white == 0)
+    {
+        end_game = 2;
+        return;
+    }
+    if(black == 0)
+    {
+        end_game = 1;
+        return;
+    }
+    if(moves_with_no_capturing == 30)
+    {
+        end_game = 3;
+        return;
+    }
+
+    int opponent;
+
+    if(player) //wybieramy przeciwnika aktaulnego gracza aby sprawdzic czy ma jakies mozliwe ruchy
+        opponent = 0;
+    else
+        opponent = 1;
+
+    if(possible_moves(opponent) == 0)
+    {
+        if(player)
+            end_game = 1;
+        else
+            end_game = 2;
+    }
+}
+
+int Window::possible_moves(int opponent) //nie używamy nigdzie copy_board, ponieważ nie jest on aktualizowany co turę(w przypadku zwykłego ruchu)
+{
+    check_captures_all_pawns(opponent); //sprawdzamy czy przeciwnik nie ma zadnych bic to pierwszy krok do tego czy moze przegral
+    if(max != 0)
+        return 1;
+
+    for(int j = 0; j < 8; j++)
+        for(int i = 0; i < 8; i++)
+        {
+            if(board.check_field(i, j))
+                if(board.get(i, j)->get_c() == opponent)
+                {
+                    if(board.get(i, j)->get_queen() == 1)
+                    {
+                        if(j >= 1 && i >= 1)
+                            if(!board.check_field(i - 1, j - 1))
+                                return 1;
+                        if(j >= 1 && i <= 6)
+                            if(!board.check_field(i + 1, j - 1))
+                                return 1;
+                        if(j <= 6 && i >= 1)
+                            if(!board.check_field(i - 1, j + 1))
+                                return 1;
+                        if(j <= 6 && i <= 6)
+                            if(!board.check_field(i + 1, j + 1))
+                                return 1;                            
+                    }
+                    else
+                    {
+                        if(opponent) //opponent == 1 (biały)
+                        {
+                            if(j >= 1)
+                            {
+                                if(i >= 1)
+                                    if(!board.check_field(i - 1, j - 1))
+                                        return 1;
+                                if(i <= 6)
+                                    if(!board.check_field(i + 1, j - 1))
+                                        return 1;
+                            }
+                        } 
+                
+                        else
+                        {
+                            if(j <= 6)
+                            {
+                                if(i >= 1)
+                                    if(!board.check_field(i - 1, j + 1))
+                                        return 1;
+                                if(i <= 6)
+                                    if(!board.check_field(i + 1, j + 1))
+                                        return 1;
+                            }
+                        }
+                    }
+                }
+        }
+        return 0;
 }

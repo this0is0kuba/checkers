@@ -13,6 +13,11 @@ class Window
     int block; // 1 - jakis pionek musi dokonczyc swoje bicia, 0 - mozna kontynuowac dowolnym pionkiem
     int block_pion[8][8]; // nie zezwa na to abysmy ruszyli sie innym pionkiem dwa razy niz poczatkowo wyralismy
 
+    int white; //ilosc bialych pionkow
+    int black; //ilosc czarnych pionkow
+    int end_game; // 0 - gra toczy sie dalej, 1 - wygral gracz bialy, 2 - wygral gracz czarny, 3 - remis(nastepuje gdy gracze wykonaja po 15 ruchow damkami bez zmniejszania liczby pionow(damek lub pionkow))
+    int moves_with_no_capturing; 
+
     Board board; //plansza
     sf::RenderWindow application_window;
 
@@ -31,7 +36,7 @@ public:
     int range();
     void choose_pawn();
 
-    void check_captues_all_pawns(int);
+    void check_captures_all_pawns(int);
     void max_capturing_queen(int, int, int, int, int);
     void max_capturing(int, int, int, int, int);
 
@@ -57,4 +62,8 @@ public:
 
     void copy_restart();
     void round_change();
+
+    void end();
+    void check_the_end_of_the_game(int);
+    int possible_moves(int);
 };
