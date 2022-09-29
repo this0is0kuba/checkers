@@ -2,7 +2,7 @@
 
 class Board
 {
-    Pawns* items[8][8]; //wskazniki do pionkow
+    Pawns* items[8][8]; //pointers on pawns
 
     float radius;
     float delta_x;

@@ -136,7 +136,7 @@ void Window::circles_display()
                 application_window.draw(board.get(i, j)->get_circle());
 }
 
-int Window::range()
+bool Window::range()
 {
     sf::Vector2i mouse_vector = sf::Mouse::getPosition();
 
@@ -219,29 +219,29 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
     {
         if(copy_board[aux_x - 1][aux_y - 1] != 2)
         {
-            if(copy_board[aux_x - 1][aux_y - 1] != copy_board[ch_i][ch_j] && copy_board[aux_x - 2][aux_y - 2] == 2) //bicie
+            if(copy_board[aux_x - 1][aux_y - 1] != copy_board[ch_i][ch_j] && copy_board[aux_x - 2][aux_y - 2] == 2) 
             {
                     count++; 
                     if(count > max_capture_board[x][y])
                         max_capture_board[x][y] = count;
 
                     if(count > max)
-                        max = count; //ile max bicia
+                        max = count; 
 
                     int jump_x = aux_x - 2;
                     int jump_y = aux_y - 2;
 
-                    while(jump_x >= 0 && jump_y >= 0 && copy_board[jump_x][jump_y] == 2) //pozwalamy damce zatrzymac sie na dowolnym polu (nie tylko bezpośrednio za zbitym pionkiem)
+                    while(jump_x >= 0 && jump_y >= 0 && copy_board[jump_x][jump_y] == 2) // we allow queen to stop on any field
                     {
                         copy_board[jump_x][jump_y] = copy_board[ch_i][ch_j];
-                        copy_board[ch_i][ch_j] = 2; //zbicie
+                        copy_board[ch_i][ch_j] = 2; 
 
                         int aux_pawns = copy_board[aux_x - 1][aux_y - 1];
-                        copy_board[aux_x - 1][aux_y - 1] = 2; //usuniecie zbitego
+                        copy_board[aux_x - 1][aux_y - 1] = 2; 
 
-                        max_capturing_queen(jump_x, jump_y, count, x, y); //reurencyjne przegladanie kolejnych bic
+                        max_capturing_queen(jump_x, jump_y, count, x, y); 
 
-                        copy_board[aux_x - 1][aux_y - 1] = aux_pawns; //powrot do poprzedniego ustawienia pionkow
+                        copy_board[aux_x - 1][aux_y - 1] = aux_pawns; 
 
                         copy_board[ch_i][ch_j] = copy_board[jump_x][jump_y];
                         copy_board[jump_x][jump_y] = 2;
@@ -251,11 +251,11 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
                     }
                     count--;
 
-                    break; // po biciu nie zezwalamy na dalsze poszukiwania bic w danym kierunku (pamietajmy ze przeskoczylismy juz przez jeden pionek
-                           // i ustawilismy go na miejsce, nie chcemy, aby doszlo do bicia pionka przesakujac przez dwa lub wiecej)
+                    break; // after capturig we don't allow to search new capuring in the given directory 
+                           // we don't want queen to jump over more than one pawn
             }
             else
-                break; //oznacza ze natrafilismy na swojego pionka
+                break; // we found a pawn with the same colour
         } 
         else
         {
@@ -278,22 +278,22 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
                     max_capture_board[x][y] = count;
 
                 if(count > max)
-                    max = count; //ile max bicia
+                    max = count; 
 
                 int jump_x = aux_x - 2;
                 int jump_y = aux_y + 2;
 
-                while(jump_x >= 0 && jump_y <= 7 && copy_board[jump_x][jump_y] == 2) //pozwalamy damce zatrzymac sie na dowolnym polu (nie tylko bezpośrednio za zbitym pionkiem)
+                while(jump_x >= 0 && jump_y <= 7 && copy_board[jump_x][jump_y] == 2) 
                 {
                     copy_board[jump_x][jump_y] = copy_board[ch_i][ch_j];
-                    copy_board[ch_i][ch_j] = 2; //zbicie
+                    copy_board[ch_i][ch_j] = 2; 
 
                     int aux_pawns = copy_board[aux_x - 1][aux_y + 1];
-                    copy_board[aux_x - 1][aux_y + 1] = 2; //usuniecie zbitego
+                    copy_board[aux_x - 1][aux_y + 1] = 2; 
 
-                    max_capturing_queen(jump_x, jump_y, count, x, y); //reurencyjne przegladanie kolejnych bic
+                    max_capturing_queen(jump_x, jump_y, count, x, y); 
 
-                    copy_board[aux_x - 1][aux_y + 1] = aux_pawns; //powrot do poprzedniego ustawienia pionkow
+                    copy_board[aux_x - 1][aux_y + 1] = aux_pawns; 
 
                     copy_board[ch_i][ch_j] = copy_board[jump_x][jump_y];
                     copy_board[jump_x][jump_y] = 2;
@@ -306,7 +306,7 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
                 break;
             }
             else
-                break; //oznacza ze natrafilismy na swojego pionka
+                break; 
         } 
         else
         {
@@ -323,29 +323,29 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
     {
         if(copy_board[aux_x + 1][aux_y + 1] != 2)
         {
-            if(copy_board[aux_x + 1][aux_y + 1] != copy_board[ch_i][ch_j] && copy_board[aux_x + 2][aux_y + 2] == 2) //bicie
+            if(copy_board[aux_x + 1][aux_y + 1] != copy_board[ch_i][ch_j] && copy_board[aux_x + 2][aux_y + 2] == 2) 
             { 
                 count++; 
                 if(count > max_capture_board[x][y])
                     max_capture_board[x][y] = count;
 
                 if(count > max)
-                    max = count; //ile max bicia
+                    max = count; 
 
                 int jump_x = aux_x + 2;
                 int jump_y = aux_y + 2;
 
-                while(jump_x <= 7 && jump_y <= 7 && copy_board[jump_x][jump_y] == 2) //pozwalamy damce zatrzymac sie na dowolnym polu (nie tylko bezpośrednio za zbitym pionkiem)
+                while(jump_x <= 7 && jump_y <= 7 && copy_board[jump_x][jump_y] == 2) 
                 {
                     copy_board[jump_x][jump_y] = copy_board[ch_i][ch_j];
-                    copy_board[ch_i][ch_j] = 2; //zbicie
+                    copy_board[ch_i][ch_j] = 2; 
 
                     int aux_pawns = copy_board[aux_x + 1][aux_y + 1];
-                    copy_board[aux_x + 1][aux_y + 1] = 2; //usuniecie zbitego
+                    copy_board[aux_x + 1][aux_y + 1] = 2; 
 
-                    max_capturing_queen(jump_x, jump_y, count, x, y); //reurencyjne przegladanie kolejnych bic
+                    max_capturing_queen(jump_x, jump_y, count, x, y); 
 
-                    copy_board[aux_x + 1][aux_y + 1] = aux_pawns; //powrot do poprzedniego ustawienia pionkow
+                    copy_board[aux_x + 1][aux_y + 1] = aux_pawns; 
 
                     copy_board[ch_i][ch_j] = copy_board[jump_x][jump_y];
                     copy_board[jump_x][jump_y] = 2;
@@ -359,7 +359,7 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
                 break;
             }
             else
-                break; //oznacza ze natrafilismy na swojego pionka
+                break; 
         } 
         else
         {
@@ -376,29 +376,29 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
     {
         if(copy_board[aux_x + 1][aux_y - 1] != 2)
         {
-            if(copy_board[aux_x + 1][aux_y - 1] != copy_board[ch_i][ch_j] && copy_board[aux_x + 2][aux_y - 2] == 2) //bicie
+            if(copy_board[aux_x + 1][aux_y - 1] != copy_board[ch_i][ch_j] && copy_board[aux_x + 2][aux_y - 2] == 2) 
             { 
                 count++; 
                 if(count > max_capture_board[x][y])
                     max_capture_board[x][y] = count;
 
                 if(count > max)
-                    max = count; //ile max bicia
+                    max = count; 
 
                 int jump_x = aux_x + 2;
                 int jump_y = aux_y - 2;
 
-                while(jump_x <= 7 && jump_y >= 0 && copy_board[jump_x][jump_y] == 2) //pozwalamy damce zatrzymac sie na dowolnym polu (nie tylko bezpośrednio za zbitym pionkiem)
+                while(jump_x <= 7 && jump_y >= 0 && copy_board[jump_x][jump_y] == 2)
                 {
                     copy_board[jump_x][jump_y] = copy_board[ch_i][ch_j];
-                    copy_board[ch_i][ch_j] = 2; //zbicie
+                    copy_board[ch_i][ch_j] = 2; 
 
                     int aux_pawns = copy_board[aux_x + 1][aux_y - 1];
-                    copy_board[aux_x + 1][aux_y - 1] = 2; //usuniecie zbitego
+                    copy_board[aux_x + 1][aux_y - 1] = 2; 
 
-                    max_capturing_queen(jump_x, jump_y, count, x, y); //reurencyjne przegladanie kolejnych bic
+                    max_capturing_queen(jump_x, jump_y, count, x, y); 
 
-                    copy_board[aux_x + 1][aux_y - 1] = aux_pawns; //powrot do poprzedniego ustawienia pionkow
+                    copy_board[aux_x + 1][aux_y - 1] = aux_pawns; 
 
                     copy_board[ch_i][ch_j] = copy_board[jump_x][jump_y];
                     copy_board[jump_x][jump_y] = 2;
@@ -411,7 +411,7 @@ void Window::max_capturing_queen(int ch_i, int ch_j, int count, int x, int y)
                 break;
             }
             else
-                break; //oznacza ze natrafilismy na swojego pionka
+                break; 
         } 
         else
         {
@@ -427,100 +427,100 @@ void Window::max_capturing(int ch_i, int ch_j, int count, int x, int y)
         if(copy_board[ch_i - 2][ch_j - 2] == 2 && copy_board[ch_i - 1][ch_j - 1] != 2)
             if(copy_board[ch_i - 1][ch_j - 1] != copy_board[ch_i][ch_j])
             {
-                count++;    //zliczanie glebokosci
+                count++;    
                 if(count > max_capture_board[x][y])
                     max_capture_board[x][y] = count;
 
                 if(count > max)
                     max = count;
 
-                copy_board[ch_i - 2][ch_j - 2] = copy_board[ch_i][ch_j]; //zamiana
+                copy_board[ch_i - 2][ch_j - 2] = copy_board[ch_i][ch_j]; 
                 int aux = copy_board[ch_i - 1][ch_j - 1];
-                copy_board[ch_i - 1][ch_j - 1] = 2; //usuwanie zbitego pionka
-                copy_board[ch_i][ch_j] = 2; //zamiana
+                copy_board[ch_i - 1][ch_j - 1] = 2; 
+                copy_board[ch_i][ch_j] = 2; 
 
                 max_capturing(ch_i - 2, ch_j - 2, count, x, y);
 
-                copy_board[ch_i][ch_j] = copy_board[ch_i - 2][ch_j - 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i][ch_j] = copy_board[ch_i - 2][ch_j - 2]; 
                 copy_board[ch_i - 1][ch_j - 1] = aux; 
                 copy_board[ch_i - 2][ch_j - 2] = 2; 
 
-                count--; //zerowanie glebokosci po powrocie
+                count--;
             }
 
     if(ch_i - 2 >= 0 && ch_j + 2 <= 7)
         if(copy_board[ch_i - 2][ch_j + 2] == 2 && copy_board[ch_i - 1][ch_j + 1] != 2)
             if(copy_board[ch_i - 1][ch_j + 1] != copy_board[ch_i][ch_j])
             {
-                count++;    //zliczanie glebokosci
+                count++;    
                 if(count > max_capture_board[x][y])
                     max_capture_board[x][y] = count;
 
                 if(count > max)
                     max = count;
 
-                copy_board[ch_i - 2][ch_j + 2] = copy_board[ch_i][ch_j]; //zamiana
+                copy_board[ch_i - 2][ch_j + 2] = copy_board[ch_i][ch_j]; 
                 int aux = copy_board[ch_i - 1][ch_j + 1];
-                copy_board[ch_i - 1][ch_j + 1] = 2; //usuwanie zbitego pionka
-                copy_board[ch_i][ch_j] = 2; //zamiana
+                copy_board[ch_i - 1][ch_j + 1] = 2; 
+                copy_board[ch_i][ch_j] = 2; 
 
                 max_capturing(ch_i - 2, ch_j + 2, count, x, y);
 
-                copy_board[ch_i][ch_j] = copy_board[ch_i - 2][ch_j + 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i][ch_j] = copy_board[ch_i - 2][ch_j + 2]; 
                 copy_board[ch_i - 1][ch_j + 1] = aux; 
                 copy_board[ch_i - 2][ch_j + 2] = 2; 
 
-                count--; //zerowanie glebokosci po powrocie
+                count--; 
             }
 
     if(ch_i + 2 <= 7 && ch_j + 2 <= 7)
         if(copy_board[ch_i + 2][ch_j + 2] == 2 && copy_board[ch_i + 1][ch_j + 1] != 2)
             if(copy_board[ch_i + 1][ch_j + 1] != copy_board[ch_i][ch_j])
             {
-                count++;    //zliczanie glebokosci
+                count++;    
                 if(count > max_capture_board[x][y])
                     max_capture_board[x][y] = count;
 
                 if(count > max)
                     max = count;
 
-                copy_board[ch_i + 2][ch_j + 2] = copy_board[ch_i][ch_j]; //zamiana
+                copy_board[ch_i + 2][ch_j + 2] = copy_board[ch_i][ch_j]; 
                 int aux = copy_board[ch_i + 1][ch_j + 1];
-                copy_board[ch_i + 1][ch_j + 1] = 2; //usuwanie zbitego pionka
-                copy_board[ch_i][ch_j] = 2; //zamiana
+                copy_board[ch_i + 1][ch_j + 1] = 2; 
+                copy_board[ch_i][ch_j] = 2; 
 
                 max_capturing(ch_i + 2, ch_j + 2, count, x, y);
 
-                copy_board[ch_i][ch_j] = copy_board[ch_i + 2][ch_j + 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i][ch_j] = copy_board[ch_i + 2][ch_j + 2]; 
                 copy_board[ch_i + 1][ch_j + 1] = aux; 
                 copy_board[ch_i + 2][ch_j + 2] = 2; 
 
-                count--; //zerowanie glebokosci po powrocie
+                count--; 
             }
 
     if(ch_i + 2 <= 7 && ch_j - 2 >= 0)
         if(copy_board[ch_i + 2][ch_j - 2] == 2 && copy_board[ch_i + 1][ch_j - 1] != 2)
             if(copy_board[ch_i + 1][ch_j - 1] != copy_board[ch_i][ch_j])
             {
-                count++;    //zliczanie glebokosci
+                count++;    
                 if(count > max_capture_board[x][y])
                     max_capture_board[x][y] = count;
 
                 if(count > max)
                     max = count;
 
-                copy_board[ch_i + 2][ch_j - 2] = copy_board[ch_i][ch_j]; //zamiana
+                copy_board[ch_i + 2][ch_j - 2] = copy_board[ch_i][ch_j]; 
                 int aux = copy_board[ch_i + 1][ch_j - 1];
-                copy_board[ch_i + 1][ch_j - 1] = 2; //usuwanie zbitego pionka
-                copy_board[ch_i][ch_j] = 2; //zamiana
+                copy_board[ch_i + 1][ch_j - 1] = 2; 
+                copy_board[ch_i][ch_j] = 2; 
 
                 max_capturing(ch_i + 2, ch_j - 2, count, x, y);
 
-                copy_board[ch_i][ch_j] = copy_board[ch_i + 2][ch_j - 2]; //ustawienie zbitego pionka na miesjce
+                copy_board[ch_i][ch_j] = copy_board[ch_i + 2][ch_j - 2]; 
                 copy_board[ch_i + 1][ch_j - 1] = aux; 
                 copy_board[ch_i + 2][ch_j - 2] = 2; 
 
-                count--; //zerowanie glebokosci po powrocie
+                count--; 
             }
 }
 
@@ -576,12 +576,13 @@ void Window::move()
         } 
 }
 
-int Window::change_pawn(int move_x, int move_y) 
+bool Window::change_pawn(int move_x, int move_y) 
 {
-    if(board.check_field(move_x,move_y)) // "board.get(move_x, move_y)->get_c() == round" nie chcemy pozwolic graczowi wybrac pionka przeciwnika
+    if(board.check_field(move_x,move_y))
     {
         if(board.get(move_x, move_y)->get_c() == round)
         {
+            // we don't let player choose opponent's pawn
             chosen_i = move_x;
             chosen_j = move_y;
         }
@@ -592,9 +593,9 @@ int Window::change_pawn(int move_x, int move_y)
         return 0;
 }
 
-int Window::upgrade_to_queen(int move_x, int move_y)
+bool Window::upgrade_to_queen(int move_x, int move_y)
 {
-    if(board.get(move_x, move_y)->get_c() == 1 && move_y == 0 && max == 0) //max == 0 - sprawdzamy czy pionek zatrzymal sie na tym polu czy moze to seria bic
+    if(board.get(move_x, move_y)->get_c() == 1 && move_y == 0 && max == 0)
             return 1;
 
     if(board.get(move_x, move_y)->get_c() == 0 && move_y == 7 && max == 0)
@@ -603,7 +604,7 @@ int Window::upgrade_to_queen(int move_x, int move_y)
     return 0;
 }
 
-int Window::legal(int move_x, int move_y)
+bool Window::legal(int move_x, int move_y)
 {
     if((move_x + move_y) % 2)
     {
@@ -629,14 +630,14 @@ int Window::legal(int move_x, int move_y)
     return 0;
 }
 
-int Window::choose_max()
+bool Window::choose_max()
 {
     if(max_capture_board[chosen_i][chosen_j] == max)
         return 1;
     return 0;
 }
 
-int Window::legal_white(int move_x, int move_y)
+bool Window::legal_white(int move_x, int move_y)
 {
     if(abs(move_x - chosen_i) == 1 && move_y - chosen_j == -1 && max == 0)
         return 1;
@@ -647,7 +648,7 @@ int Window::legal_white(int move_x, int move_y)
     return 0;
 }
 
-int Window::legal_black(int move_x, int move_y)
+bool Window::legal_black(int move_x, int move_y)
 {
     if(abs(move_x - chosen_i) == 1 && move_y - chosen_j == 1 && max == 0)
         return 1;
@@ -658,7 +659,7 @@ int Window::legal_black(int move_x, int move_y)
     return 0;
 }
 
-int Window::capturing_a_pawn(int move_x, int move_y)
+bool Window::capturing_a_pawn(int move_x, int move_y)
 {
     if(abs(move_x - chosen_i) == 2 && abs(move_y - chosen_j) == 2)
         if(board.get((chosen_i + move_x) / 2, (chosen_j + move_y) / 2) != nullptr)
@@ -673,14 +674,14 @@ int Window::capturing_a_pawn(int move_x, int move_y)
     return 0;
 }
 
-int Window::is_it_max(int move_x, int move_y)
+bool Window::is_it_max(int move_x, int move_y)
 {   
     if(block)
         if(block_pion[chosen_i][chosen_j] == 0)
             return 0;
     
     copy_board[move_x][move_y] = copy_board[chosen_i][chosen_j];
-    copy_board[chosen_i][chosen_j] = 2; // symualacja bicia
+    copy_board[chosen_i][chosen_j] = 2; // we simulate a capturing
 
     int x = (chosen_i + move_x) / 2;
     int y = (chosen_j + move_y) / 2;
@@ -693,6 +694,7 @@ int Window::is_it_max(int move_x, int move_y)
 
     if(max == aux_max - 1)
     {   
+        // we check if after our simulating "max" decreased by one - if yes we've made a good move
         if(max >= 1)
         {
             block = 1;
@@ -710,21 +712,21 @@ int Window::is_it_max(int move_x, int move_y)
     {
         copy_board[chosen_i][chosen_j] = copy_board[move_x][move_y];
         copy_board[move_x][move_y] = 2;
-        copy_board[x][y] = aux; //wstawienie pionka na miejscea
+        copy_board[x][y] = aux;
         
         max = aux_max;
         return 0;
     }
 }
 
-int Window::is_it_max_queen(int move_x, int move_y) 
+bool Window::is_it_max_queen(int move_x, int move_y) 
 {
     if(block)
         if(block_pion[chosen_i][chosen_j] == 0)
             return 0;
 
     copy_board[move_x][move_y] = copy_board[chosen_i][chosen_j];
-    copy_board[chosen_i][chosen_j] = 2; // symualacja bicia
+    copy_board[chosen_i][chosen_j] = 2;
 
     int x, y;
 
@@ -777,14 +779,14 @@ int Window::is_it_max_queen(int move_x, int move_y)
     {
         copy_board[chosen_i][chosen_j] = copy_board[move_x][move_y];
         copy_board[move_x][move_y] = 2;
-        copy_board[x][y] = aux; //wstawienie pionka na miejscea
+        copy_board[x][y] = aux;
         
         max = aux_max;
         return 0;
     }
 }
 
-int Window::legal_queen(int move_x, int move_y)
+bool Window::legal_queen(int move_x, int move_y)
 {
     if(queen_legal_move(move_x, move_y) && max == 0)
         return 1;
@@ -795,7 +797,7 @@ int Window::legal_queen(int move_x, int move_y)
     return 0;
 }
 
-int Window::capturing_a_queen(int move_x, int move_y)
+bool Window::capturing_a_queen(int move_x, int move_y)
 {
     int i = chosen_i;
     int j = chosen_j;
@@ -844,7 +846,7 @@ int Window::capturing_a_queen(int move_x, int move_y)
     return 0;
 }
 
-int Window::queen_legal_move(int move_x, int move_y)
+bool Window::queen_legal_move(int move_x, int move_y)
 {
     int i = chosen_i;
     int j = chosen_j;
@@ -870,7 +872,7 @@ int Window::queen_legal_move(int move_x, int move_y)
     else
         return 0;
     
-    moves_with_no_capturing ++; // zliczamy ruchy damka bez zbijania
+    moves_with_no_capturing ++;
     return 1;
 }
 
@@ -916,7 +918,7 @@ void Window::round_change()
     check_captures_all_pawns(round);
 }
 
-void Window::check_the_end_of_the_game(int player)
+void Window::check_the_end_of_the_game(bool player)
 {
     if(white == 0)
     {
@@ -936,7 +938,7 @@ void Window::check_the_end_of_the_game(int player)
 
     int opponent;
 
-    if(player) //wybieramy przeciwnika aktaulnego gracza aby sprawdzic czy ma jakies mozliwe ruchy
+    if(player)
         opponent = 0;
     else
         opponent = 1;
@@ -950,11 +952,13 @@ void Window::check_the_end_of_the_game(int player)
     }
 }
 
-int Window::possible_moves(int opponent) //nie używamy nigdzie copy_board, ponieważ nie jest on aktualizowany co turę(w przypadku zwykłego ruchu)
+bool Window::possible_moves(bool opponent) //nie używamy nigdzie copy_board, ponieważ nie jest on aktualizowany co turę(w przypadku zwykłego ruchu)
 {
-    check_captures_all_pawns(opponent); //sprawdzamy czy przeciwnik nie ma zadnych bic to pierwszy krok do tego czy moze przegral
+    //we don't use "copy_board" beacause it doesn't update after every round
+
+    check_captures_all_pawns(opponent);
     if(max != 0)
-        return 1;
+        return 1; //if the opponent has 0 capture, there is a chance that he has lost
 
     for(int j = 0; j < 8; j++)
         for(int i = 0; i < 8; i++)
@@ -979,7 +983,7 @@ int Window::possible_moves(int opponent) //nie używamy nigdzie copy_board, poni
                     }
                     else
                     {
-                        if(opponent) //opponent == 1 (biały)
+                        if(opponent)
                         {
                             if(j >= 1)
                             {

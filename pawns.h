@@ -20,8 +20,8 @@ public:
     sf::CircleShape get_circle();
     float get_circle_x();
     float get_circle_y();
-    virtual int get_c() = 0;
-    int get_queen();
+    virtual bool get_c() = 0;
+    bool get_queen();
 
     virtual void upgrade_to_queen() = 0;
 };
@@ -29,22 +29,22 @@ public:
 class WhitePawns : public Pawns
 {
     const static sf::Color color;
-    const int c = 1;
+    const bool c = 1;
 
 public:
     WhitePawns();
 
-    int get_c();
+    bool get_c();
     void upgrade_to_queen();
 };
 
 class BlackPawns : public Pawns
 {
     const static sf::Color color;
-    const int c = 0;
+    const bool c = 0;
 public:
     BlackPawns();
 
-    int get_c();
+    bool get_c();
     void upgrade_to_queen();
 };

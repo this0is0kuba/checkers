@@ -25,7 +25,7 @@ float Pawns::get_circle_x() {return circle.getPosition().x;}
 
 float Pawns::get_circle_y() {return circle.getPosition().y;}
 
-int Pawns::get_queen() {return queen;}
+bool Pawns::get_queen() {return queen;}
 
 // ------------------------------ WhitePawns ------------------------------ //
 
@@ -36,7 +36,7 @@ WhitePawns::WhitePawns() : Pawns()
     circle.setFillColor(color);
 }
 
-int WhitePawns::get_c()
+bool WhitePawns::get_c()
 {
     return c;
 }
@@ -62,7 +62,7 @@ BlackPawns::BlackPawns() : Pawns()
     circle.setFillColor(color);
 }
 
-int BlackPawns::get_c()
+bool BlackPawns::get_c()
 {
     return c;
 }
