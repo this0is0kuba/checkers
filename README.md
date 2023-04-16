@@ -13,4 +13,4 @@ The game analyzes all possible moves and doesn't let you do the incorrect ones.
 
 **2. Examples with legal moves which are analyzed by the algorithm. (You always have to choose the move with the most captures)**
 
-<img src="images/two_captures.png" width="300" height="250"> <img src="images/three_captures.png" width="300" height="250"> <img src="images/queen.png" width="300" height="250"> 
+<img src="images/two_captures.png" width="258" height="215"> <img src="images/three_captures.png" width="258" height="215"> <img src="images/queen.png" width="258" height="215"> 
